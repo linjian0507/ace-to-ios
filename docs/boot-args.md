@@ -8,7 +8,7 @@ This is a catalogue of what exists and who reads it, not a manual. What an argum
 
 Layers: **K** the kernel, **L** the loader, **U** user space (through `sysctl kern.bootargs`).
 
-## GPU and display (115)
+## GPU and display (116)
 
 | Argument | Layer | Read by | Configuration | Set by |
 |---|---|---|---|---|
@@ -115,6 +115,7 @@ Layers: **K** the kernel, **L** the loader, **U** user space (through `sysctl ke
 | `gpu_keep` | K | `hakios.gpu.cpp` | `CONFIG_GPU_KEEP` |  |
 | `gpu_log` | K | `hakios.adreno.c` | `CONFIG_GPU_LOG` |  |
 | `gpu_probe` | K | `hakios.adreno.c` | `CONFIG_GPU_PROBE` |  |
+| `hakios_kver` | K | `MiniIOMobileFramebuffer.cpp`, `hakios.version.c` |  | the loader (from the payload's kernel.ver) |
 | `metal` | KU | `HakiosMetal.m`, `MiniIOMobileFramebuffer.cpp`, `inject_sb.c` | `CONFIG_METAL` |  |
 | `rec_mb` | K | `MiniIOMobileFramebuffer.cpp` | `CONFIG_REC_MB` |  |
 | `rec_ring` | K | `MiniIOMobileFramebuffer.cpp` | `CONFIG_REC_RING` |  |
@@ -389,12 +390,6 @@ Layers: **K** the kernel, **L** the loader, **U** user space (through `sysctl ke
 | `thermal_stop` | K | `hakios.thermal.c` | `CONFIG_THERMAL_STOP` |  |
 | `thermal_tm0` | K | `hakios.thermal.c` | `CONFIG_THERMAL_TM0` |  |
 | `thermal_tm1` | K | `hakios.thermal.c` | `CONFIG_THERMAL_TM1` |  |
-
-## Version (1)
-
-| Argument | Layer | Read by | Configuration | Set by |
-|---|---|---|---|---|
-| `hakios_kver` | K | `hakios.version.c` |  | the loader (from the payload's kernel.ver) |
 
 ## CPU, memory and boot (30)
 
