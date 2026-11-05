@@ -1512,6 +1512,18 @@ configure_vnodes(void)
 	}
 }
 
+static void
+swipe_demo(void)
+{
+	char program[128];
+	char *argv[] = { program, "wait", "100", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", "notify", "com.hakios.switcher", "wait", "2.0", NULL };
+	char *envp[] = { "PATH=/bin:/usr/bin", "HOME=/", NULL };
+	strcpy(program, in_image("/bin/rwtouch"));
+	if (fork() == 0) {
+		execve(program, argv, envp);
+		_exit(127);
+	}
+}
 int
 main(int argc, char **argv, char **envp)
 {
@@ -1555,6 +1567,9 @@ main(int argc, char **argv, char **envp)
 	test_dynamic();
 	test_devices();
 	test_time();
+	if (boot_arg("swipe_demo") != NULL) {
+		swipe_demo();
+	}
 
 	printf("\n=== %d checks, %d failed ===\n", checks, failures);
 	/* daemons that do not run as root get the console as their standard error too */
