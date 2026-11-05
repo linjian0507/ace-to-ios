@@ -16,6 +16,7 @@ tests=(
     tools/pclm10-test-wled-apply.py
     tools/pclm10-test-buttons-mapping.py
     tools/pclm10-test-beam-gate.py
+    tools/pclm10-test-backlight-control.py
     tools/boot-args-test.py
     tools/kernel-version-test.py
     tools/mkesp-test.py
