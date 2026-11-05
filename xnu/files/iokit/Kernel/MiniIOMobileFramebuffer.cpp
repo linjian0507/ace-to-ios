@@ -912,12 +912,44 @@ IOMobileFramebuffer::beamProbeMain(void * self, wait_result_t result __unused)
 	((IOMobileFramebuffer *) self)->beamProbe();
 }
 
+/* Whether the kernel version string says this SoC: "…-sm8150-…" in hakios_kver. */
+static bool
+beamKverHas(const char *kver, const char *soc)
+{
+	for (const char *p = kver; *p != 0; p++) {
+		const char *a = p;
+		const char *b = soc;
+
+		while (*a != 0 && *b != 0 && *a == *b) {
+			a++;
+			b++;
+		}
+		if (*b == 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void
 IOMobileFramebuffer::beamProbe(void)
 {
 	vm_offset_t intf;
 	uint32_t first, frames, line, lines = 0, smallest = ~0u;
 	uint64_t began, ended, until;
+	char kver[96];
+
+	/*
+	 * The interface this probe reads is the SM7325/SC7280's DPU (DPU_INTF1_PAGE). On another SoC that
+	 * address is another block, and reading it faults the bus: the pclm10 (SM8150) was reset 60 s into
+	 * every run with fb_beam=1 (2026-11-05). Where the controller is not the one this probe knows,
+	 * frames stay on their beat -- the probe and the waits behind it are not tried there.
+	 */
+	if (PE_parse_boot_arg_str("hakios_kver", kver, sizeof(kver)) && beamKverHas(kver, "-sm8150-")) {
+		IOLog("MiniIOMobileFramebuffer: fb_beam: this SoC's display controller is not the one this probe knows: "
+		    "frames stay on their beat\n");
+		return;
+	}
 
 	IOSleep(60000);
 	intf = ml_io_map(DPU_INTF1_PAGE, 0x4000) + DPU_INTF1_OFFSET;
