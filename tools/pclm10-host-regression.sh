@@ -15,6 +15,7 @@ tests=(
     tools/pclm10-test-hapc-recipe.py
     tools/pclm10-test-wled-apply.py
     tools/pclm10-test-buttons-mapping.py
+    tools/pclm10-test-beam-gate.py
     tools/boot-args-test.py
     tools/kernel-version-test.py
     tools/mkesp-test.py
