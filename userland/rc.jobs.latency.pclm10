@@ -1,0 +1,17 @@
+# P4a for pclm10: the window server's touch-to-panel latency, with nobody at the phone.
+# The software path reaches SpringBoard at about 136 s of kernel time, stays near 47 C in a 150 s run;
+# home first (page 1 has Settings at 0.615/0.71), 40 s to settle, then two zigzags for tools/latency.py
+# to fit against the screen recording.
+/redwood/bin/hello_dyn started by launchd
+/redwood/bin/rwtouch wait 130
+/redwood/bin/rwtouch button home 200
+/redwood/bin/rwtouch wait 3
+/redwood/bin/rwtouch tap 0.615 0.71
+/redwood/bin/rwtouch wait 40
+/redwood/bin/rwtouch swipe 0.5 0.8 0.5 0.55 600
+/redwood/bin/rwtouch wait 3
+/redwood/bin/rwtouch zigzag 0.5 0.75 0.5 300 6
+/redwood/bin/rwtouch wait 2
+/redwood/bin/rwtouch zigzag 0.5 0.75 0.5 300 6
+/redwood/bin/rwtouch wait 2
+/redwood/bin/rwtouch button home 200
