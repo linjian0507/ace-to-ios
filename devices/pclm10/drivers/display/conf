@@ -1,0 +1,11 @@
+# devices/pclm10/drivers/display/conf: the display-side hardware of this phone.
+# CONFIG_HAKIOS_<NAME>=y in a defconfig builds a driver into the kernel; "standard" files are always built.
+# tools/hakios-config.py reads this file; docs/drivers-config.md says what each word means and how it reaches XNU.
+
+driver WLED
+	file    bsd/dev/hakios.wled.c
+	help    the panel's backlight (wled=1): the PM8150L's WLED module at 0xd800, whose master
+	help    switch is register 0x46 bit 7. The screen of this port is driven through the boot
+	help    firmware's framebuffer, so backboardd's blank request reaches no hardware; this
+	help    module is that hardware. A thread follows kern.hakios.screen_backlight (1 lit, 0 dark)
+	help    and writes the switch; wled_test=1 adds one blink at startup for bring-up

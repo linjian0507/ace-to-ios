@@ -1,0 +1,131 @@
+// SPDX-License-Identifier: BSD-3-Clause
+/*
+ * The OPPO Reno Ace (PCLM10, SM8150) for HakiOS's U-Boot.
+ *
+ * Only what U-Boot needs: the memory the firmware and the remote processors keep, the panel's framebuffer as the
+ * bootloader left it, the keys, USB as a device (fastboot) and UFS.
+ *
+ * The addresses below are the phone's own, from its device tree: the tree in its `boot` partition (read over EDL,
+ * 31 Oct) is the whole story for this phone - its `dtbo` holds two audio overlays and no board overlay. That tree
+ * says qcom,msm-id = <339 0x20000> (SM8150 v2), qcom,board-id = <0 0>, oppo,dtsi_no = <0x4a89>, and its
+ * cont_splash_region is at 0x9d000000 for 36 MiB. The size of RAM is not in it either (see below).
+ *
+ * The size of RAM is not here: ABL writes it into the device tree it hands over, and U-Boot reads it from there
+ * (arch/arm/mach-snapdragon/board.c, qcom_parse_memory()).
+ */
+
+/dts-v1/;
+
+#include <dt-bindings/arm/qcom,ids.h>
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/linux-event-codes.h>
+#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+#include "sm8150.dtsi"
+#include "pm8150.dtsi"
+#include "pm8150b.dtsi"
+#include "pm8150l.dtsi"
+
+/ {
+	model = "OPPO Reno Ace";
+	compatible = "oppo,pclm10", "qcom,sm8150";
+	chassis-type = "handset";
+
+	/* what ABL matches against: the phone's own tree says msm-id 339 (SM8150 v2) and board-id <0 0> */
+	qcom,msm-id = <QCOM_ID_SM8150 0x20000>;
+	qcom,board-id = <0 0>;
+
+	chosen {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges;
+
+		/*
+		 * The panel as ABL left it: the phone's own cont_splash_region is at 0x9d000000 for 36 MiB, and
+		 * 1080 x 2400 is the Reno Ace's resolution. The HakiOS loader knows the phone by this address
+		 * (xnuloader/loader.c, efi_main()). No clocks: U-Boot keeps the display running by not touching it.
+		 */
+		framebuffer0: framebuffer@9d000000 {
+			compatible = "simple-framebuffer";
+			reg = <0x0 0x9d000000 0x0 (1080 * 2400 * 4)>;
+			width = <1080>;
+			height = <2400>;
+			stride = <(1080 * 4)>;
+			format = "a8r8g8b8";
+		};
+	};
+
+	gpio-keys {
+		compatible = "gpio-keys";
+		/* The phone's own tree has no volume keys at all: they are read by the PMIC's PON hardware, not
+		 * through GPIOs. So only PON's own keys are described: the power key and the resin (volume-down). */
+	};
+
+	reserved-memory {
+		/*
+		 * The phone's own reservations, from its boot partition's device tree (read over EDL, 31 Oct):
+		 * hyp_mem 0x85700000/6M, xbl_aop_mem 0x85e00000/1.25M, smem 0x86000000/2M, removed_regions
+		 * 0x86200000/117M, modem 0x8dc00000/160M, adsp 0x9b200000/30M, cdsp 0x99700000/20M, qseecom
+		 * 0xa0000000/20M, mem_dump up to 0xb8200000. The reference ones from sm8150.dtsi stand in for
+		 * them - the remote processors are not started on this path so their regions stay unused - and the
+		 * two every HakiOS device needs of its own are here for real:
+		 */
+
+		/* the panel's memory, at the phone's own address and size (its cont_splash_region) */
+		cont_splash_mem: cont-splash@9d000000 {
+			reg = <0x0 0x9d000000 0x0 0x2400000>;
+			no-map;
+		};
+
+		/*
+		 * Where the HakiOS loader takes its payload from (PAYLOAD_BASE, 64 MiB with the panic log in its
+		 * last MiB). Mapped (no no-map): the hakios command writes the payload here, and nothing else in
+		 * U-Boot may take it.
+		 */
+		hakios_payload_mem: hakios-payload@f0000000 {
+			reg = <0x0 0xf0000000 0x0 0x4000000>;
+		};
+	};
+};
+
+&pon_pwrkey {
+	status = "okay";
+};
+
+&pon_resin {
+	linux,code = <KEY_VOLUMEDOWN>;
+	status = "okay";
+};
+
+&ufs_mem_hc {
+	reset-gpios = <&tlmm 175 GPIO_ACTIVE_LOW>;
+	status = "okay";
+};
+
+&ufs_mem_phy {
+	status = "okay";
+};
+
+/* USB 2.0 as a device: U-Boot's fastboot. Started from the boot partition, not from ABL's fastboot: nothing
+   here has been initialized by ABL, so the core's clocks, reset and GDSC (power-domains, applied by driver
+   model when the glue probes) and the HS PHY all come up in U-Boot. */
+&usb_1 {
+	qcom,select-utmi-as-pipe-clk;
+	dr_mode = "peripheral";
+	maximum-speed = "high-speed";
+	phys = <&usb_1_hsphy>;
+	phy-names = "usb2-phy";
+	status = "okay";
+};
+
+/* the core takes every phys entry it is given (generic_phy_get_bulk()): the SuperSpeed PHY stays out, it is
+   disabled and nothing would bind it — only the HS PHY, which is what high-speed needs */
+&usb_1_dwc3 {
+	dr_mode = "peripheral";
+	maximum-speed = "high-speed";
+	phys = <&usb_1_hsphy>;
+	phy-names = "usb2-phy";
+};
+
+&usb_1_hsphy {
+	status = "okay";
+};

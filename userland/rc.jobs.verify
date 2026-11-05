@@ -1,0 +1,4 @@
+# Verification job: CPU count/parallel speed after all cores are up, and the local network stack loopback.
+/redwood/bin/net_test loop
+/redwood/bin/rwtouch wait 30
+/redwood/bin/cpu_test

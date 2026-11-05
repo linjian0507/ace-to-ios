@@ -1,0 +1,3 @@
+# CPU benchmark after the cores have joined: one thread, then one per processor, with the processor time given.
+/redwood/bin/rwtouch wait 30
+/redwood/bin/cpu_test 5

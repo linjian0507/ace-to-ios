@@ -1,0 +1,22 @@
+# devices/pclm10/drivers/camera/conf: this phone's own camera and flashlight driver. The flash is
+# the PM8150L's flash module on SPMI slave 5; the cameras are the five sensors of fragment@42, their
+# CCI buses, CAMCC clocks, PMIC resets and two PM8008 rail chips. The common drivers/camera/ has the
+# POCO X5 Pro's four sensors, its PM8350C torch and its yupik CAMCC/CSID/IFE; all of those belong to
+# another phone, so this module is this phone's own. It is built by CONFIG_HAKIOS_FLASH=y (already
+# set): cam= brings the cameras up, flash= the torch.
+# CONFIG_HAKIOS_<NAME>=y in a defconfig builds a driver into the kernel; "standard" files are always built.
+# tools/hakios-config.py reads this file; docs/drivers-config.md says what each word means and how it reaches XNU.
+
+driver FLASH
+	file    bsd/dev/hakios.flash.c
+	help    the flashlight and the cameras of this phone. flash=1 reads the PM8150L flash module at
+	help    0xd300 on SPMI slave 5 through the PMIC arbiter; flash=2 runs the vendor driver's torch
+	help    on-sequence for LED 0 (12.5 mA step, software strobe, 300 mA, safety timer off, module
+	help    and channel enable), reads the fault registers while it is lit, and puts everything back;
+	help    flash=3 leaves the torch on. cam=1 reads only: GCC's camera clocks, the titan top GDSC,
+	help    the four MCLK roots, the CCI/MCLK pins, the PM8150 GPIO1 rear reset, the PM8150L GPIO1/4
+	help    PM8008 enables and both PM8008s' LDOs; cam=2 powers the rear main sensor (CCI 0 master 0,
+	help    CSIPHY 0, MCLK 0, PM8008 #2) and reads its chip ID and EEPROM; cam=3 the front sensor;
+	help    cam=4 all five sensors in turn; cam=5 leaves the main sensor powered. The sensor models
+	help    are the public ones (IMX586 main, IMX319 ultra-wide, IMX471 front, S5K3M5 tele, a 2 MP
+	help    OmniVision mono); the chip ID read is what confirms them.

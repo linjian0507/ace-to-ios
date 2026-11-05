@@ -1,0 +1,28 @@
+# Automated acceptance job: no human at the phone. Gestures go through /dev/hakios-touch.
+# Built into the small image with RC_JOBS=rc.jobs.autotest. The host takes screenshots on a timer.
+/redwood/bin/hello_dyn started by launchd
+# let SpringBoard build its first screen (the software path reaches it in about forty seconds)
+/redwood/bin/rwtouch wait 60
+# a swipe up from the bottom edge, in case the lock screen is what came up
+/redwood/bin/rwtouch swipe 0.5 0.99 0.5 0.35 250
+/redwood/bin/rwtouch wait 3
+# open Messages from the dock (the dock is on every home page)
+/redwood/bin/rwtouch tap 0.62 0.93
+/redwood/bin/rwtouch wait 7
+# back to the home screen with the Home button
+/redwood/bin/rwtouch button home 200
+/redwood/bin/rwtouch wait 4
+# one page to the left and back
+/redwood/bin/rwtouch swipe 0.8 0.5 0.2 0.5 300
+/redwood/bin/rwtouch wait 3
+/redwood/bin/rwtouch swipe 0.2 0.5 0.8 0.5 300
+/redwood/bin/rwtouch wait 3
+# volume keys: the HUD, if iOS takes them
+/redwood/bin/rwtouch button voldown 200
+/redwood/bin/rwtouch wait 2
+/redwood/bin/rwtouch button volup 200
+/redwood/bin/rwtouch wait 2
+# and one more tap on a page icon, then Home again
+/redwood/bin/rwtouch tap 0.13 0.35
+/redwood/bin/rwtouch wait 5
+/redwood/bin/rwtouch button home 200

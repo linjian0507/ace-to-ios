@@ -1,0 +1,15 @@
+# devices/pclm10/drivers/haptic/conf: this phone's own vibration driver: the PM8150B's HAPC block
+# on SPMI slave 3. The common drivers/haptic/ has the POCO X5 Pro's Awinic AW86927 on that phone's
+# I2C bus; this actuator hangs off the PMIC bus and belongs to this phone alone.
+# CONFIG_HAKIOS_<NAME>=y in a defconfig builds a driver into the kernel; "standard" files are always built.
+# tools/hakios-config.py reads this file; docs/drivers-config.md says what each word means and how it reaches XNU.
+
+driver HAPC
+	file    bsd/dev/hakios.hapc.c
+	help    the vibration motor of this phone: the PM8150B's HAPC block at 0xc000 on SPMI slave 3,
+	help    driven open-loop through the PMIC arbiter. hapc=1 reads its status and configuration;
+	help    hapc=2 writes this phone's device tree's own recipe (LRA, sine, 3400 mV, 6667 us,
+	help    direct-drive), plays half a second, reads the busy bits while it runs, and puts
+	help    everything back; hapc=3 leaves it playing. No firmware and no interrupt: eight writes.
+	help    This block is not what moves the motor on this phone: the AW8697 below is.
+	file    bsd/dev/hakios.aw8697.c

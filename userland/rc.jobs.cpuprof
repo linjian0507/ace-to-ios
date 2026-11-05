@@ -1,0 +1,30 @@
+# Commands run by the launchd job com.hakios.demo (see com.hakios.demo.plist).
+# The default rc.jobs, and then two more ps snapshots a minute apart: the first
+# one runs nine seconds into the boot, before lsd has even been spawned, and the
+# process that fills the console with "denied attempt to escape CPU monitor" is
+# measured nowhere. TIME is cumulative, so two snapshots say who is spending the
+# CPU while the phone gets warm (notes/remaining-hardware.md, 2026-11-05).
+/redwood/bin/hello_dyn started by launchd
+/redwood/bin/svc_test
+/redwood/bin/surf_test
+/bin/ps -A
+/redwood/bin/mg_test
+# the processors: how many, and -- once the system has settled -- whether they work at the same time
+/redwood/bin/cpu_test
+/redwood/bin/cpu_test 240 &
+# lsd is spawned about eight seconds in; these snapshots bracket the minute
+# in which the GPU frames are drawn and the CPU monitor complains about lsd.
+# Twenty seconds apart: with thirty the last one lands after the kernel has
+# begun to come back and never prints (020310, 90 s round). For a 150 s round
+# all five print; the point is whether lsd's TIME stops growing once the
+# LaunchServices database and the containers are built.
+sleep 20
+/bin/ps -A
+sleep 20
+/bin/ps -A
+sleep 20
+/bin/ps -A
+sleep 20
+/bin/ps -A
+sleep 20
+/bin/ps -A

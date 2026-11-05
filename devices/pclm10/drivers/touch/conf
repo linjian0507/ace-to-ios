@@ -1,0 +1,12 @@
+# devices/pclm10/drivers/touch/conf: this phone's own touch driver: the Synaptics S3706 on serial
+# engine 17 of its second QUP wrapper. The common drivers/input/ has a Goodix and a FocalTech, on
+# another phone's SPI bus; this controller, its bus and its addresses belong to this phone alone.
+# CONFIG_HAKIOS_<NAME>=y in a defconfig builds a driver into the kernel; "standard" files are always built.
+# tools/hakios-config.py reads this file; docs/drivers-config.md says what each word means and how it reaches XNU.
+
+driver S3706
+	file    bsd/dev/hakios.s3706.c
+	help    the touch screen of this phone: a Synaptics S3706 at I2C address 0x20 on serial engine 17
+	help    of the second QUP wrapper, driven here without a clock, pin, I2C or interrupt framework
+	help    (touch=1). This is the bring-up: the bus, the pins, the 1.8 V enable and the chip's two
+	help    product id registers; touch_steps=N stops after step N. Reports and multi-touch come after.

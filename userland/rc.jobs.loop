@@ -1,0 +1,6 @@
+# Commands run by the launchd job com.hakios.demo (see com.hakios.demo.plist).
+# M0 of devices/pclm10/notes/wifi.md: the stack to itself, no driver, no firmware, no radio.
+# if_loop.c is already in the kernel; this is the first end-to-end exercise of the BSD stack.
+# Build the images with RC_JOBS=rc.jobs.loop, then qemu/run-darwin.sh (no QEMU_NET needed) or
+# xl ramdisk + xl run on the phone. See src/net_test.m, loopback_test().
+/redwood/bin/net_test loop

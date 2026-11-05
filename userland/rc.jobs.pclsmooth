@@ -1,0 +1,16 @@
+# Commands run by the launchd job com.hakios.demo (see com.hakios.demo.plist).
+# The smoothness demo for the OPPO Reno Ace (RC_JOBS=rc.jobs.pclsmooth): the same gestures in the
+# same order every round, so two rounds can be compared frame by frame (boot-arg touch_lat=1,
+# tools/frames.py) and so the phone can be watched dragging itself without anybody's finger.
+# The waits are from this phone's own boot timeline (logs/003246-run.log: the job starts about
+# nine seconds after the kernel, the window server answers at t+15 s), so wait 26 puts the first
+# gesture at t+35 s with SpringBoard long done. Nothing here depends on an icon's place: page
+# swipes go across the home screen, and pulling down from its middle opens Search on every iOS 16.
+# The loopback line first: it costs nothing when the stack is well (0.00 s with four cores) and
+# says in the same log that the network side is still alive.
+/redwood/bin/net_test loop
+/redwood/bin/rwtouch wait 26 swipe 0.85 0.5 0.15 0.5 300 wait 2 swipe 0.15 0.5 0.85 0.5 300 wait 2
+/redwood/bin/rwtouch swipe 0.85 0.5 0.15 0.5 300 wait 2 swipe 0.15 0.5 0.85 0.5 300 wait 2
+/redwood/bin/rwtouch swipe 0.5 0.4 0.5 0.7 300 wait 3 swipe 0.5 0.7 0.5 0.4 300 wait 3
+/redwood/bin/rwtouch swipe 0.85 0.5 0.15 0.5 300 wait 2 swipe 0.15 0.5 0.85 0.5 300 wait 2
+/redwood/bin/rwtouch swipe 0.5 0.4 0.5 0.7 300 wait 3 swipe 0.5 0.7 0.5 0.4 300 wait 3

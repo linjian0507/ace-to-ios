@@ -1,0 +1,16 @@
+# devices/pclm10/drivers/bluetooth/conf: this phone's own Bluetooth driver. The common
+# drivers/bluetooth/ is the POCO X5 Pro's WCN6750 pin-look; this phone's chip is a WCN3990 on a
+# QUPv3 GENI UART, and the driver below is the first polled H4 path to it (notes/bluetooth.md).
+# CONFIG_HAKIOS_<NAME>=y in a defconfig builds a driver into the kernel; "standard" files are always built.
+# tools/hakios-config.py reads this file; docs/drivers-config.md says what each word means and how it reaches XNU.
+
+driver WCNBT
+	file    bsd/dev/hakios.wcnbt.c
+	default n
+	help    the Bluetooth half of this phone's WCN3990: the three RPMh rails the bt_wcn3990
+	help    node asks for (ldoa7 1800 mV, ldoc2 1304 mV, ldoc11 3312 mV), the QUPv3 wrapper 2
+	help    engine 3 UART at 0xc8c000 (gpio43-46, 115200, polled GENI FIFO), and the WCN3990
+	help    power-on pulse (0xC0 at 2400, 0xFC at 115200). wcnbt=1 votes the rails, configures
+	help    the port and reads the controller's product/SOC/ROM/patch version; wcnbt=2 also
+	help    sends HCI Reset. No firmware is loaded at either level. Add
+	help    CONFIG_HAKIOS_WCNBT=y to devices/pclm10/configs/pclm10.config to build it.

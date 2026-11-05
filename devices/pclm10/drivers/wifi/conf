@@ -1,0 +1,27 @@
+# devices/pclm10/drivers/wifi/conf: this phone's first look at its SLPI, the subsystem the WLAN's
+# firmware runs on (notes/wifi.md §2). The common drivers/wifi/ is the WCN6750 phone's whole
+# Wi-Fi stack and needs fw-wifi/ and QMI; this is one driver of observation: the four power rails
+# the icnss node asks for, voted through RPMh, and the Q6's control block, read once.
+# CONFIG_HAKIOS_<NAME>=y in a defconfig builds a driver into the kernel; "standard" files are always built.
+# tools/hakios-config.py reads this file; docs/drivers-config.md says what each word means and how it reaches XNU.
+
+driver SLPI
+	file    bsd/dev/hakios.slpi.c
+	help    the SLPI of this phone: its rails, its image, and its Q6 block. slpi=1 lists every
+	help    resource the boot loader's command database holds, by name and address; slpi=2 adds
+	help    the four rails the icnss node asks for (ldoa1 752 mV, ldoa7 1800 mV, ldoc2 1304 mV,
+	help    ldoc11 3104 mV, three TCS votes each, the way the touch driver votes ldoa17) and a
+	help    report on the two ARC resources the ssc node's vdd_cx and vdd_mx are (named, not
+	help    written); slpi=3 adds M2: on a thread that waits for the root, /fw/slpi.mdt and its
+	help    segment files are read, handed to TrustZone for their signature, placed in the region
+	help    the device tree reserves (0x98100000, 20 MiB, the image shifted by 0xE00000 as the
+	help    vendor's relocating loader does), written and read back, and started through the
+	help    always-on processor and TrustZone, then the q6 block at 0x5c00000 is read after
+	help    slpi_wait seconds (3); slpi=4 reads that block even when the start failed; slpi=5
+	help    leaves the always-on processor's mailbox alone and asks TrustZone directly, a
+	help    diagnostic for when the mailbox itself is what stops the run. The q6
+	help    read is tied to these levels because the phone answered on 2026-11-03
+	help    (logs/095451-run.log): while the slpi is down the first read of that window never
+	help    comes back and the kernel hangs where it stands -- the block is worth reading only
+	help    after something has started the subsystem. slpi_base= overrides the region's address.
+	help    No vote here is ever dropped.

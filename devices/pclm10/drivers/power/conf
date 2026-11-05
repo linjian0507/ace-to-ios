@@ -1,0 +1,29 @@
+# devices/pclm10/drivers/power/conf: this phone's own power drivers: the SMB5 charger and the gen4 gauge
+# on its PM8150B (charging on this phone is managed on the application processor's side, not by the DSP),
+# and the keys of its PM8150: the power key on the power-on block, the volume keys on its GPIO controller.
+# CONFIG_HAKIOS_<NAME>=y in a defconfig builds a driver into the kernel; "standard" files are always built.
+# tools/hakios-config.py reads this file; docs/drivers-config.md says what each word means and how it reaches XNU.
+
+driver SMB5
+	requires BATTERY
+	file    bsd/dev/hakios.smb5.c
+	help    the SMB5 charger and the gen4 fuel gauge on this phone's PM8150B, read through the PMIC
+	help    arbiter (smb5=1): which stage the charge is in, what the USB port found, and the battery's
+	help    voltage and current, handed to the battery monitor and the power source Darwin reads
+
+driver PON
+	file    bsd/dev/hakios.pon.c
+	help    the keys of this phone, read through the PMIC arbiter (pon=1): the power key on the
+	help    power-on block of its PM8150, the older single kind, subtype 0x04, whose KPDPWR is bit 0
+	help    of its status -- not the split PMK8350's that drivers/input/hakios.buttons.c knows --
+	help    and both volume keys on that chip's GPIO controller, blocks 0xc500 and 0xc600, which
+	help    the driver enables as inputs with a pull-up and reads; the block's RESIN input is watched
+	help    too and says what it sees, but it is not this phone's volume down (logs/093440-run.log)
+
+driver BQ27541
+	file    bsd/dev/hakios.bq27541.c
+	help    the pack's own gauge (bq27541=1): the BQ27541 the overlay puts at 0x55 on the
+	help    i2c@0xc94000 bus, read by bit-banging that bus's two pins (gpio27/gpio28, east TLMM
+	help    tile) -- the QUPv3 serial engine there reports its FIFO interface disabled and its
+	help    vendor driver uses GPI DMA, so the pads are driven directly. The charge, voltage,
+	help    current and temperature go to the SMB5 driver's battery report

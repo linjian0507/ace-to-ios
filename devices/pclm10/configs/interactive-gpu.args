@@ -1,0 +1,1 @@
+adreno=22 adreno_skip=0x1cc0 adreno_no_oob=1 adreno_gpucc_restore=1 adreno_vendor_rptr=1 adreno_vendor_nc=1 adreno_vendor_protect=1 adreno_halt_observe=1 adreno_walk=1 adreno_keep=1

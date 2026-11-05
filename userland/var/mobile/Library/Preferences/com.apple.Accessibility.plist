@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- With the software renderer every animation is drawn on the processor, and the
+	     launch/close zooms and the wallpaper's parallax are the expensive ones. These are
+	     the two switches Settings > Accessibility offers; turning them on here makes the
+	     home screen and app changes cross-fade instead (notes/touch.md, the UI's pace). -->
+	<key>ReduceMotionEnabled</key>
+	<true/>
+	<key>ReduceTransparencyEnabled</key>
+	<true/>
+</dict>
+</plist>
