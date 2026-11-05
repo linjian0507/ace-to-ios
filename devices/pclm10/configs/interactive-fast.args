@@ -1,0 +1,6 @@
+# The fast interactive profile measured on 2026-11-05: with the SLEEPD=0 image and the cores at their top
+# row, the home screen is up at ~24.5 s (recording logs/p6-boot-fast-2026-11-05/recording.raw, frame at
+# 24.5 s is the icon grid; the software path with SLEEPD=1 and cpufreq=0 takes ~95 s).
+# The phone runs hot with this (66.4 C at 120 s in that run); per the user's rule the tests do not wait
+# for it to cool down, and thermal_stop=80 is the hard stop.
+cpufreq=1 thermal_stop=80
